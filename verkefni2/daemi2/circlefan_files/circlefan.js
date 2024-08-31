@@ -38,8 +38,8 @@ window.onload = function init() {
     document.getElementById("slider").onchange = function(event) {
         numCirclePoints = Number(event.target.value);
         
-        console.log(numCirclePoints)
         createCirclePoints(center, radius, numCirclePoints);
+        
         var vBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW);
