@@ -42,9 +42,10 @@ window.onload = function init()
     for ( var i = 0; points.length < NumPoints; ++i ) {
         var j = 0;
         var rand = Math.random();
-        if (rand < 0.9) {
-            j = Math.floor(rand * 2) + 1;
+        if (rand > 0.9) {
+            j = Math.floor(Math.random() * 2) + 1;
         }
+        console.log(j);
         p = add( points[i], vertices[j] );
         p = scale( 0.5, p );
         points.push( p );
