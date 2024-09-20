@@ -61,7 +61,7 @@ function triangle( a, b, c )
     points.push( a, b, c );
 }
 
-function divideTriangle( a, b, c, count )
+function divideSquare( a, b, c, d, count )
 {
 
     // check for end of recursion
@@ -74,8 +74,9 @@ function divideTriangle( a, b, c, count )
         //bisect the sides
 
         var ab = mix( a, b, 0.5 );
-        var ac = mix( a, c, 0.5 );
         var bc = mix( b, c, 0.5 );
+        var cd = mix( c, d, 0.5 );
+        var ad = mix( a, d, 0.5 );
 
         --count;
 
