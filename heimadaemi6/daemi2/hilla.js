@@ -5,6 +5,7 @@ var numVertices = 36;
 
 var points = [];
 var colors = [];
+var normalsArray = [];
 
 var movement = false;
 var spinX = 0;
@@ -12,7 +13,39 @@ var spinY = 0;
 var origX;
 var origY;
 
-var matrixLoc;
+var zDist = -3.0;
+
+var fovy = 50.0;
+var near = 0.2;
+var far = 100.0;
+
+var va = vec4(0.0, 0.0, -1.0, 1);
+var vb = vec4(0.0, 0.942809, 0.333333, 1);
+var vc = vec4(-0.816497, -0.471405, 0.333333, 1);
+var vd = vec4(0.816497, -0.471405, 0.333333,1);
+
+var lightPosition = vec4(1.0, 1.0, 1.0, 0.0 );
+var lightAmbient = vec4(0.2, 0.2, 0.2, 1.0 );
+var lightDiffuse = vec4( 1.0, 1.0, 1.0, 1.0 );
+var lightSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
+
+var materialAmbient = vec4( 1.0, 0.0, 1.0, 1.0 );
+var materialDiffuse = vec4( 1.0, 0.8, 0.0, 1.0 );
+var materialSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
+var materialShininess = 150.0;
+
+var ctm;
+var ambientColor, diffuseColor, specularColor;
+
+var mv, projectionMatrix;
+var modelViewMatrixLoc, projectionMatrixLoc;
+
+var normalMatrix, normalMatrixLoc;
+
+var eye;
+var at = vec3(0.0, 0.0, 0.0);
+var up = vec3(0.0, 1.0, 0.0);
+
 
 window.onload = function init() {
     canvas = document.getElementById("gl-canvas");
@@ -26,10 +59,18 @@ window.onload = function init() {
     gl.clearColor(1.0, 1.0, 1.0, 1.0);
 
     gl.enable(gl.DEPTH_TEST);
+    gl.depthFunc(gl.LEQUAL);
 
+    var dypi = gl.getParameter(gl.DEPTH_BITS);
+    var gildi = gl.getParameter(gl.DEPTH_CLEAR_VALUE);
+    var bil = gl.getParameter(gl.DEPTH_RANGE);
 
     var program = initShaders( gl, "vertex-shader", "fragment-shader" );
     gl.useProgram( program );
+
+    ambientProdcut = mult(lightAmbient, materialAmbient);
+    diffuseProduct = mult(lightDiffuse, materialDiffuse);
+    specialProduct = mult(lightSpecular, materialSpecular);
     
     var cBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
@@ -91,6 +132,28 @@ function quad(a, b, c, d) {
         vec3( -0.5,  0.5, -0.5 ),
         vec3(  0.5,  0.5, -0.5 ),
         vec3(  0.5, -0.5, -0.5 )
+    ];
+    /*
+    var vertexColors = [
+        [ 0.0, 0.0, 0.0, 1.0 ],  // black
+        [ 1.0, 0.0, 0.0, 1.0 ],  // red
+        [ 1.0, 1.0, 0.0, 1.0 ],  // yellow
+        [ 0.0, 1.0, 0.0, 1.0 ],  // green
+        [ 0.0, 0.0, 1.0, 1.0 ],  // blue
+        [ 1.0, 0.0, 1.0, 1.0 ],  // magenta
+        [ 0.0, 1.0, 1.0, 1.0 ],  // cyan
+        [ 1.0, 1.0, 1.0, 1.0 ]   // white
+    ];
+    */
+    var vertexColors = [
+        [ 1.0, 1.0, 0.0, 1.0 ],  // black
+        [ 1.0, 1.0, 0.0, 1.0 ],  // red
+        [ 1.0, 1.0, 0.0, 1.0 ],  // yellow
+        [ 1.0, 1.0, 0.0, 1.0 ],  // green
+        [ 1.0, 1.0, 0.0, 1.0 ],  // blue
+        [ 1.0, 1.0, 0.0, 1.0 ],  // magenta
+        [ 1.0, 1.0, 0.0, 1.0 ],  // cyan
+        [ 1.0, 1.0, 0.0, 1.0 ]   // white
     ];
 
     //vertex color assigned by the index of the vertex

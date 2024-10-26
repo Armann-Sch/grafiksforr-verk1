@@ -12,6 +12,9 @@ var spinY = 0;
 var origX;
 var origY;
 
+var sec = 0;
+var min = 0;
+
 var matrixLoc;
 
 window.onload = function init() {
@@ -62,6 +65,13 @@ window.onload = function init() {
 
     canvas.addEventListener("mousemove", function(e) {
         if(movement) {
+            if(sec >= 60) {
+                sec = 0;
+                min +=1;
+            }
+            if(min >= 60) {
+                
+            }
             spinY = (spinY + (origX - e.offsetX)) % 360;
             spinX = (spinX + (origY - e.offsetY)) % 360;
             origX = e.offsetX;
@@ -93,6 +103,17 @@ function quad(a, b, c, d) {
         vec3(  0.5, -0.5, -0.5 )
     ];
 
+    var vertexColors = [
+        [ 0.0, 0.0, 0.0, 1.0 ],  // black
+        [ 1.0, 0.0, 0.0, 1.0 ],  // red
+        [ 1.0, 1.0, 0.0, 1.0 ],  // yellow
+        [ 0.0, 1.0, 0.0, 1.0 ],  // green
+        [ 0.0, 0.0, 1.0, 1.0 ],  // blue
+        [ 1.0, 0.0, 1.0, 1.0 ],  // magenta
+        [ 0.0, 1.0, 1.0, 1.0 ],  // cyan
+        [ 1.0, 1.0, 1.0, 1.0 ]   // white
+    ];
+
     //vertex color assigned by the index of the vertex
     var indices = [ a, b, c, a, c, d ];
 
@@ -116,41 +137,7 @@ function render() {
     gl.uniformMatrix4fv(matrixLoc, false, flatten(mv1));
     gl.drawArrays( gl.TRIANGLES, 0, numVertices );
 
-    // Vinstri hliðin
-    mv1 = mult( mv, translate( -0.39, 0.0, 0.0 ) );
-    mv1 = mult( mv1, scalem( 0.03, 1.06, 0.28 ) );
-    gl.uniformMatrix4fv(matrixLoc, false, flatten(mv1));
-    gl.drawArrays( gl.TRIANGLES, 0, numVertices );
-
-    // Hægri hliðin
-    mv1 = mult( mv, translate( 0.39, 0.0, 0.0 ) );
-    mv1 = mult( mv1, scalem( 0.03, 1.06, 0.28 ) );
-    gl.uniformMatrix4fv(matrixLoc, false, flatten(mv1));
-    gl.drawArrays( gl.TRIANGLES, 0, numVertices );
-
-    // Hillurnar
-    //// Toppur
-    mv1 = mult( mv, translate( 0.0, 0.52, 0.0 ) );
-    mv1 = mult( mv1, scalem( 0.8, 0.03, 0.28 ) );
-    gl.uniformMatrix4fv(matrixLoc, false, flatten(mv1));
-    gl.drawArrays( gl.TRIANGLES, 0, numVertices );
-
-    //// Botn
-    mv1 = mult( mv, translate( 0.0, -0.52, 0.0 ) );
-    mv1 = mult( mv1, scalem( 0.8, 0.03, 0.28 ) );
-    gl.uniformMatrix4fv(matrixLoc, false, flatten(mv1));
-    gl.drawArrays( gl.TRIANGLES, 0, numVertices );
     
-    //// Miðhillur
-    mv1 = mult( mv, translate( 0.0, 0.2, 0.0 ) );
-    mv1 = mult( mv1, scalem( 0.8, 0.03, 0.28 ) );
-    gl.uniformMatrix4fv(matrixLoc, false, flatten(mv1));
-    gl.drawArrays( gl.TRIANGLES, 0, numVertices );
-    
-    mv1 = mult( mv, translate( 0.0, -0.2, 0.0 ) );
-    mv1 = mult( mv1, scalem( 0.8, 0.03, 0.28 ) );
-    gl.uniformMatrix4fv(matrixLoc, false, flatten(mv1));
-    gl.drawArrays( gl.TRIANGLES, 0, numVertices );
     // Finally the middle bar (no translation necessary)
     /*mv1 = mult( mv, scalem( 0.5, 0.1, 0.1 ) );
     gl.uniformMatrix4fv(matrixLoc, false, flatten(mv1));
