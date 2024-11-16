@@ -70,15 +70,15 @@ window.onload = function init() {
 
     ambientProdcut = mult(lightAmbient, materialAmbient);
     diffuseProduct = mult(lightDiffuse, materialDiffuse);
-    specialProduct = mult(lightSpecular, materialSpecular);
+    specularProduct = mult(lightSpecular, materialSpecular);
     
-    var cBuffer = gl.createBuffer();
-    gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
-    gl.bufferData( gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW );
+    var nBuffer = gl.createBuffer();
+    gl.bindBuffer( gl.ARRAY_BUFFER, nBuffer );
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(normalsArray), gl.STATIC_DRAW );
 
-    var vColor = gl.getAttribLocation( program, "vColor" );
-    gl.vertexAttribPointer( vColor, 4, gl.FLOAT, false, 0, 0 );
-    gl.enableVertexAttribArray( vColor );
+    var vNormal = gl.getAttribLocation(program, "vNormal");
+    gl.vertexAttribPointer( vNormal, 4, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray( vNormal );
 
     var vBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
@@ -88,8 +88,20 @@ window.onload = function init() {
     gl.vertexAttribPointer( vPosition, 3, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( vPosition );
 
-    matrixLoc = gl.getUniformLocation( program, "transform" );
+    modelViewMatrixLoc = gl.getUniformLocation(program, "modelViewMatrix");
+    projectionMatrix = gl.getUniformLocation(program, "projectionMatrix");
+    normalMatrixLoc = gl.getUniformLocation(program, "normalMatrix");
 
+    //matrixLoc = gl.getUniformLocation( program, "transform" );
+
+    projectionMatrix = perspective(fovy, 1.0, near, far);
+
+    gl.uniform4fv(gl.getUniformLocation(program, "ambientProduct"), flatten(ambientProdcut));
+    gl.uniform4fv(gl.getUniformLocation(program, "diffuseProduct"), flatten(diffuseProduct));
+    gl.uniform4fv(gl.getUniformLocation(program, "specularProduct"), flatten(specularProduct));
+    gl.uniform4fv(gl.getUniformLocation(program, "lightPosition"), flatten(lightPosition));
+    gl.uniform1f(gl.getUniformLocation(program, "shininess"), materialShininess);
+    
     canvas.addEventListener("mousedown", function(e) {
         movement = true;
         origX = e.offsetX;
